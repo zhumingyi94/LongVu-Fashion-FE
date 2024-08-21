@@ -1,0 +1,9 @@
+.imageContainer {
+    width: 100%;
+    max-width: 100%; /* Ensures the container does not exceed the viewport width */
+  }
+  
+  .image {
+    object-fit: contain; /* Ensures the image fits within the container without being cropped */
+  }
+  
