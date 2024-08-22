@@ -10,9 +10,67 @@ import WomenBodySection from "@/components/layout/WomenBodySection";
 import VideoHeaderReverse from "@/components/ui/VideoHeaderReverse";
 import WhiteFooter from "@/components/layout/Footer";
 import ProductCard from "@/components/ui/ProductCard";
-
+import TrendingProducts from "@/components/layout/TrendingProducts";
 
 const inter = Inter({ subsets: ["latin"] });
+const trendingProducts = [
+  {
+    imageUrl: "/images/product1.jpg",
+    name: "One Piece Medium",
+    brand: "MIU MIU",
+    price: 3725,
+    rating: 4
+  },
+  {
+    imageUrl: "/images/product2.jpg",
+    name: "Leather Handbag",
+    brand: "MIU MIU",
+    price: 2950,
+    rating: 5
+  },
+  {
+    imageUrl: "/images/product3.jpg",
+    name: "Silk Blouse",
+    brand: "MIU MIU",
+    price: 1200,
+    rating: 3
+  },
+  {
+    imageUrl: "/images/product4.jpg",
+    name: "Pleated Skirt",
+    brand: "MIU MIU",
+    price: 1500,
+    rating: 4
+  },
+  {
+    imageUrl: "/images/product5.jpg",
+    name: "Crystal Necklace",
+    brand: "MIU MIU",
+    price: 890,
+    rating: 5
+  },
+  {
+    imageUrl: "/images/product6.jpg",
+    name: "Embellished Pumps",
+    brand: "MIU MIU",
+    price: 950,
+    rating: 4
+  },
+  {
+    imageUrl: "/images/product7.jpg",
+    name: "Wool Coat",
+    brand: "MIU MIU",
+    price: 2800,
+    rating: 5
+  },
+  {
+    imageUrl: "/images/product8.jpg",
+    name: "Leather Belt",
+    brand: "MIU MIU",
+    price: 450,
+    rating: 4
+  }
+];
 
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -52,12 +110,10 @@ export default function Home() {
       <VideoHeaderLarge video_text_normal="WE CARE FOR" video_text_bold="CUSTOMERS" />
       <WomenBodySection />
       <VideoHeaderReverse video_text_bold="TRENDING" video_text_normal="PRODUCTS"></VideoHeaderReverse>
-      <ProductCard 
-  imageUrl="/DressTestpng.png"
-  name="One Piece Medium"
-  brand="MIU MIU"
-  price={3.725}
-  rating={4}
+      <TrendingProducts 
+  products={trendingProducts} 
+  title="Featured Items"
+  cols={{ sm: 1, md: 2, lg: 3 }}
 />
       <WhiteFooter></WhiteFooter>
     </div>

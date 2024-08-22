@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SearchBar from '../ui/SearchBar';
 import Button from '../ui/Button';
+import { useRouter } from 'next/router';
 
 const linkStyle = {
     color: '#FFF',
@@ -17,6 +18,11 @@ const linkStyle = {
 
 const NavbarUnauth = () => {
     const [imgSrc, setImgSrc] = useState('/Bell_light.png');
+    const router = useRouter();
+
+    const handleSignInClick = () => {
+        router.push('/signin');
+    };
   return (
     <nav 
       className="py-4 w-full grid grid-cols-12 gap-10 px-10">
@@ -51,7 +57,7 @@ const NavbarUnauth = () => {
       </a> 
     </div>
     <div>
-      <Button button_text="SIGN IN" />
+      <Button button_text="SIGN IN" onClick={handleSignInClick}/>
     </div>
 
     </div>
