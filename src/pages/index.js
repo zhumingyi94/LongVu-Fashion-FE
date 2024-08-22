@@ -8,6 +8,8 @@ import MenBodySection from "@/components/layout/MenBodySection";
 import VideoHeaderLarge from "@/components/ui/VideoHeaderLarge";
 import WomenBodySection from "@/components/layout/WomenBodySection";
 import VideoHeaderReverse from "@/components/ui/VideoHeaderReverse";
+import WhiteFooter from "@/components/layout/Footer";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,6 +51,7 @@ export default function Home() {
       <VideoHeaderLarge video_text_normal="WE CARE FOR" video_text_bold="CUSTOMERS" />
       <WomenBodySection />
       <VideoHeaderReverse video_text_bold="TRENDING" video_text_normal="PRODUCTS"></VideoHeaderReverse>
+      <WhiteFooter></WhiteFooter>
     </div>
   );
 }
