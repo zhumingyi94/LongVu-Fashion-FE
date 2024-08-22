@@ -6,7 +6,7 @@ const WhiteFooter = () => {
 
   return (
     <div className="w-full gap-[40px] max-w-[1920px] h-[579px] px-4 flex-shrink-0 bg-white flex flex-col items-center justify-center mx-auto">
-      <Image src="/LogoFooter.png" alt="Long Vu Fashion" width={305} height={170} />
+      <Image src="/LogoFooter.png" alt="Long Vu Fashion" width={407} height={564} />
       <div className="flex flex-row gap-[60px] mt-4">
         <div
           onMouseEnter={() => setHoveredIcon('linkedin')}
