@@ -85,7 +85,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-black">
+    <div className="bg-black overflow-x-hidden">
       <NavbarUnauth />
       <div className="relative w-full h-[850px] overflow-hidden">
         {images.map((src, index) => (

@@ -42,7 +42,7 @@ const WhiteFooter = () => {
           />
         </div>
       </div>
-      <div className="text-center text-[#979797] font-montserrat text-[20px] font-thin w-[520px]">
+      <div className="text-center text-[#979797] font-montserrat text-[18px] font-light w-[520px]">
         ©2024 Do Minh Nhat - Vu Van Long - Nguyen Quy Dang. All rights reserved.
       </div>
     </div>

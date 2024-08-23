@@ -1,98 +1,49 @@
 // pages/signin.js
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import WhiteFooter from '@/components/layout/Footer';
 import Image from 'next/image';
-import Link from 'next/link';
+import SearchBar from '@/components/ui/SearchBar';
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle sign-in logic here
-  };
-
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="p-4 bg-black text-white">
-        <div className="flex justify-between items-center max-w-7xl mx-auto">
-          <Link href="/" className="text-2xl font-bold">
-            Long Vu
-          </Link>
-          <input
-            type="text"
-            placeholder="Find your favorite clothes"
-            className="w-1/2 p-2 rounded-full text-black"
+      <div className="flex flex-grow">
+        {/* Left side remains unchanged */}
+        <div className='w-1/2 h-[1040px] relative'>
+          <div 
+            className="absolute inset-0 bg-cover bg-center z-0 before:content-[''] before:absolute before:inset-0 before:bg-black before:opacity-40" 
+            style={{ backgroundImage: "url('/BGAuthen.png')" }} 
           />
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="flex-grow grid grid-cols-1 md:grid-cols-2">
-        {/* Left column - Login form */}
-        <div className="bg-black text-white p-8 flex flex-col justify-center">
-          <h2 className="text-4xl font-bold mb-8">Log In</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block mb-2">Username/ Email</label>
-              <input
-                id="email"
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your username or email"
-                className="w-full p-2 bg-transparent border-b border-white"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block mb-2">Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="w-full p-2 bg-transparent border-b border-white"
-              />
-            </div>
-            <button type="submit" className="w-full bg-white text-black py-2 font-bold">
-              Log in
-            </button>
-          </form>
-          <div className="mt-4 text-center">
-            <p>OR</p>
-            <button className="w-full border border-white py-2 mt-2">
-              Continue with Google
-            </button>
-            <button className="w-full border border-white py-2 mt-2">
-              Continue with Facebook
-            </button>
+          <div className="relative z-10">
+            <nav className='flex flex-row p-4'>
+              <Image src="/Logo.png" alt="Logo" width={98} height={58}/>
+              <SearchBar />
+            </nav>
+            {/* Add more content for the left side here */}
           </div>
-          <Link href="/forgot-password" className="text-center mt-4">
-            Forget Password?
-          </Link>
         </div>
 
-        {/* Right column - Image with text overlay */}
-        <div className="relative hidden md:block">
-          <Image
-            src="/path-to-your-image.jpg"
-            alt="Fashion"
-            layout="fill"
-            objectFit="cover"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <h2 className="text-white text-4xl font-bold text-center">
+        {/* Right side with updated text styling */}
+        <div className="w-1/2 relative overflow-hidden">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          >
+            <source src="/BGVideo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-black bg-opacity-30">
+            <h1 className="text-white text-center text-[70.701px] leading-normal" style={{ fontFamily: '"Kaushan Script", cursive' }}>
               The only fashion site you
-              <br />
-              <span className="tracking-widest">N E E D</span>
+            </h1>
+            <h2 className="text-white font-montserrat text-[70.701px] font-bold leading-[140.715%] tracking-[33.937px]">
+              NEED
             </h2>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* Footer */}
       <WhiteFooter />

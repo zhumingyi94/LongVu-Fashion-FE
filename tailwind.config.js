@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         montserrat: ['Montserrat', 'sans-serif'],
+        kaushan: ['Kaushan Script', 'cursive'],
       },
       transitionDuration: {
         '2000': '2000ms',
