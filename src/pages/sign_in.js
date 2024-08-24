@@ -66,9 +66,15 @@ const SignIn = () => {
   </svg>
   <span className="transition-colors duration-300 ease-in-out group-hover:text-black">Continue with Facebook</span>
 </button>
-<a href="#" className="group text-white font-montserrat font-light text-[20px] block text-center hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#05FFF0] hover:to-[#064CFF] transition-all duration-300 ease-in-out">
-  <u className="group-hover:decoration-[#05FFF0]">Forgot Password?</u>
+<a
+  href="#"
+  className="group text-white font-montserrat font-light text-[20px] block text-center transition-all duration-300 ease-in-out"
+>
+  <u className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white group-hover:from-[#05FFF0] group-hover:to-[#064CFF] transition-all duration-300 ease-in-out decoration-white group-hover:decoration-[#05FFF0]">
+    Forgot Password?
+  </u>
 </a>
+
               </form>
             </div>
 

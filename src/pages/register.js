@@ -25,11 +25,11 @@ const SignIn = () => {
           </nav>
             {/* Add more content for the left side here */}
             <div className="flex-grow flex flex-col justify-center items-center max-w-md w-full mt-[72px] ml-[300px]">
-              <h1 className="font-kaushan text-white text-7xl mb-10 text-center mb-12">Log In</h1>
+              <h1 className="font-kaushan text-white text-7xl mb-8 text-center mb-12 mt-[-20px]">Register</h1>
               <form className="w-full space-y-6">
                 <div>
                   <label className="text-white font-montserrat mb-2 text-[20px]">Username/ Email</label>
-                  <input type="text" placeholder="Enter your username or email" className="w-full mb-3 pb-1 bg-transparent border-b border-white text-[#777] font-montserrat text-[29.802px] font-extralight placeholder-[#777]"
+                  <input type="text" placeholder="Enter your username or email" className="w-full pb-1 bg-transparent border-b border-white text-[#777] font-montserrat text-[29.802px] font-extralight placeholder-[#777]"
   style={{ lineHeight: 'normal' }}/>
                 </div>
                 <div>
@@ -39,9 +39,19 @@ const SignIn = () => {
   placeholder="Enter your password" 
   className="w-full pb-1 bg-transparent border-b border-white text-[#777] font-montserrat text-[29.802px] font-extralight placeholder-[#777]"
   style={{ lineHeight: 'normal' }}
-/>                </div>
+/>                
+                </div>
+                <div>
+                  <label className="text-white font-montserrat mb-2 text-[20px]">Re-enter your password</label>
+                  <input 
+  type="password" 
+  placeholder="Enter your password" 
+  className="w-full pb-1 bg-transparent border-b border-white text-[#777] font-montserrat text-[29.802px] font-extralight placeholder-[#777]"
+  style={{ lineHeight: 'normal' }}
+/>                
+                </div>
 <button className="group w-full bg-white text-black font-montserrat py-3 px-4 font-bold text-[20px] border border-white transition-all duration-300 ease-in-out hover:bg-transparent !mt-[40px]">
-  <span className="group-hover:text-white transition-colors duration-300 ease-in-out">Log in</span>
+  <span className="group-hover:text-white transition-colors duration-300 ease-in-out">Register</span>
 </button>
                 <div className="flex items-center justify-center my-6">
   <div className="flex-grow h-px bg-white"></div>
@@ -60,15 +70,25 @@ const SignIn = () => {
   <span className="transition-colors duration-300 ease-in-out group-hover:text-black">Continue with Google</span>
 </button>
 
-<button className="!mb-10 group w-full border border-white text-white font-montserrat text-[22px] font-light flex items-center px-20 py-3 transition-all duration-300 ease-in-out hover:bg-white">
+<button className="!mb-6 group w-full border border-white text-white font-montserrat text-[22px] font-light flex items-center px-20 py-3 transition-all duration-300 ease-in-out hover:bg-white">
   <svg className="w-6 h-6 mr-4 transition-colors duration-300 ease-in-out group-hover:fill-black" viewBox="0 0 24 24" fill="white">
     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
   </svg>
   <span className="transition-colors duration-300 ease-in-out group-hover:text-black">Continue with Facebook</span>
 </button>
-<a href="#" className="group text-white font-montserrat font-light text-[20px] block text-center hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#05FFF0] hover:to-[#064CFF] transition-all duration-300 ease-in-out">
-  <u className="group-hover:decoration-[#05FFF0]">Forgot Password?</u>
-</a>
+<div className="flex justify-center items-center">
+  <span className="text-white font-montserrat text-[20px]">Already have an account?</span>
+  <a
+    href="#"
+    className="group text-transparent font-montserrat font-light text-[20px] ml-2 bg-clip-text bg-gradient-to-r from-[#05FFF0] to-[#064CFF] transition-all duration-300 ease-in-out hover:text-white"
+  >
+    <u className="transition-all duration-300 ease-in-out decoration-[#05FFF0] group-hover:decoration-white">
+      Log in
+    </u>
+  </a>
+</div>
+
+
               </form>
             </div>
 
