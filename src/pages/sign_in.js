@@ -35,10 +35,10 @@ const SignIn = () => {
             Your browser does not support the video tag.
           </video>
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-black bg-opacity-30">
-            <h1 className="text-white text-center text-[70.701px] leading-normal" style={{ fontFamily: '"Kaushan Script", cursive' }}>
+            <h1 className="text-white text-center text-[70.701px] leading-normal ml-[30px] mt-[-70px]" style={{ fontFamily: '"Kaushan Script", cursive' }}>
               The only fashion site you
             </h1>
-            <h2 className="text-white font-montserrat text-[70.701px] font-bold leading-[140.715%] tracking-[33.937px]">
+            <h2 className="text-white font-montserrat text-[70.701px] font-bold leading-[140.715%] tracking-[33.937px]  ml-[30px]">
               NEED
             </h2>
           </div>

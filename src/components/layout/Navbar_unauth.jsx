@@ -21,7 +21,7 @@ const NavbarUnauth = () => {
     const router = useRouter();
 
     const handleSignInClick = () => {
-        router.push('/signin');
+        router.push('/sign_in');
     };
   return (
     <nav 
