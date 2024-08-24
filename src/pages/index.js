@@ -79,7 +79,7 @@ export default function Home() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3600); // Change image every 5 seconds
+    }, 3000); // Change image every 5 seconds
 
     return () => clearInterval(intervalId);
   }, []);
