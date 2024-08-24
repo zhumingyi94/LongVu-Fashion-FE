@@ -34,3 +34,10 @@ body {
     text-wrap: balance;
   }
 }
+
+@layer utilities {
+  .group:hover u {
+    text-decoration-color: transparent;
+  }
+}
+
