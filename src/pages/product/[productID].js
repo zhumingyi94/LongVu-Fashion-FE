@@ -186,7 +186,7 @@ export default function ProductDetail() {
                   <Plus size={16} />
                 </button>
               </div>
-              <button className="group w-full bg-transparent h-[52px] w-[350px] text-white font-montserrat font-light text-[16px] border border-white transition-all duration-300 ease-in-out hover:bg-white hover:text-black">
+              <button className="group w-full bg-transparent h-[52px] !w-[350px] text-white font-montserrat font-light text-[16px] border border-white transition-all duration-300 ease-in-out hover:bg-white hover:text-black">
                 Add to Cart
               </button>
             </div>
