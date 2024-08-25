@@ -9,7 +9,7 @@ const SearchBar = () => {
         maxWidth: '100%',
         height: '43px',
         padding: '9px 20px',
-        gap: '12px',
+        gap: '4px',
         backgroundColor: 'white',
         borderRadius: '51.466px',
         boxShadow: '-7.841px 5.227px 4.117px 0px rgba(0, 0, 0, 0.25)',
@@ -20,7 +20,7 @@ const SearchBar = () => {
       <input
         type="text"
         placeholder="Find your favorite clothes"
-        className="outline-none focus:outline-none focus:ring-0 border-none text-sm ml-3"
+        className="outline-none focus:outline-none focus:ring-0 border-none text-l ml-3"
         style={{ 
           fontFamily: 'Montserrat, sans-serif',
           width: 'calc(100% - 40px)',
