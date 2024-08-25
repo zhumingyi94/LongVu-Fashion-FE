@@ -2,7 +2,7 @@ import React from 'react';
 
 const VideoHeaderProduct = ({video_text_normal, video_text_bold}) => {
   return (
-    <div className="relative w-full h-[200px] overflow-hidden mx-auto md:max-w-[1920px]">
+    <div className="relative w-full h-[242px] overflow-hidden mx-auto md:max-w-[1920px]">
       <video
         autoPlay
         loop
@@ -17,7 +17,7 @@ const VideoHeaderProduct = ({video_text_normal, video_text_bold}) => {
           <span className="font-light text-[75.546px] tracking-[22.664px] leading-normal">{video_text_normal}</span>
           <span className="font-bold text-[75.546px] tracking-[22.664px] leading-normal">{video_text_bold}</span>
         </h1>
-        <h2 className="text-white font-montserrat text-[75.546px] font-thin tracking-[22.664px] leading-normal self-center">
+        <h2 className="text-white font-montserrat text-[75.546px] font-light tracking-[22.664px] leading-normal self-center mb-[30px]">
           YOU MIGHT ALSO 
           <span className="font-bold ml-6 bg-gradient-to-r from-[#05FFF0] to-[#064CFF] bg-clip-text text-transparent">
             LIKE
