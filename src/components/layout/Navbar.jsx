@@ -55,7 +55,7 @@ const NavbarAuth = () => {
             <span className={activeSection === 'MEN' ? 'font-bold' : ''}>MEN</span>
           </Link>
         </div>
-        <div className="flex-1 max-w-[900px] min-w-[200px] mx-4">
+        <div className="flex-1 max-w-[900px] min-w-[200px] mx-4 text-black">
           <SearchBar placeholder="Find your favorite clothes" />
         </div>
         <div className="flex items-center shrink-0">
