@@ -12,7 +12,7 @@ const ProductGallery = ({ products }) => {
   return (
     <div className="flex bg-black p-8">
       {/* Small Product Gallery */}
-      <div className="w-40 flex flex-col space-y-4 overflow-y-auto mr-8">
+      <div className="w-[166px] flex flex-col space-y-4 overflow-y-auto">
         {products.map((product, index) => (
           <ProductCardSmall
             key={index}
@@ -24,7 +24,7 @@ const ProductGallery = ({ products }) => {
       </div>
 
       {/* Main Product Detail */}
-      <div className="flex-1">
+      <div className="flex-1 ml-[100px]">
         <ProductCardDetail
           imageUrl={selectedProduct.imageUrl}
           name={selectedProduct.name}
