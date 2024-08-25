@@ -13,7 +13,20 @@ module.exports = {
       },
       transitionDuration: {
         '2000': '2000ms',
-      }
+      },
+      fontSize: {
+        '38.616': '38.616px',
+        '25.455': '25.455px',
+      },
+      letterSpacing: {
+        '18.536': '18.536px',
+      },
+      lineHeight: {
+        '140.715': '140.715%',
+      },
+      gap: {
+        '6.364': '6.364px',
+      },
     },
   },
   plugins: [],

@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import WhiteFooter from '@/components/layout/Footer';
-import NavbarAuth from '@/components/layout/Navbar';
+import NavbarUnauth from '@/components/layout/Navbar_unauth';
 
 const Error = () => {
   return (
@@ -21,7 +21,7 @@ const Error = () => {
 
         {/* Navbar and Overlay */}
         <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center">
-          <NavbarAuth className="absolute top-0 left-0 w-full z-20" />
+          <NavbarUnauth className="absolute top-0 left-0 w-full z-20" />
 
           {/* Overlay and Text */}
           <div className="flex flex-col justify-center items-center w-full h-full z-10">
@@ -43,7 +43,7 @@ const Error = () => {
         <WhiteFooter />
       </div>
     </div>
-  );
+  );    
 };
 
 export default Error;
