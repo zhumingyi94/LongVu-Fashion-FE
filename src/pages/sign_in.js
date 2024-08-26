@@ -8,7 +8,7 @@ import Link from 'next/link';
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,7 @@ const SignIn = () => {
     try {
       const response = await fetch('/api/auth/token', {
         method: 'POST',
-        headers: {
+        headers: { 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),

@@ -56,7 +56,8 @@ const ProductGrid = ({ products }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentProducts.map((product) => (
               <ProductCard 
-                key={product.id} 
+
+                productId={product.id} 
                 name={product.name}
                 brand={product.category}
                 price={product.price}

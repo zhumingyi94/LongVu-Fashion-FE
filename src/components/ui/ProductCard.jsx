@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
-const ProductCard = ({ imageUrl, name, brand, price, rating }) => {
+const ProductCard = ({ imageUrl, name, brand, price, rating, productId }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/product/${productId}`);
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent card click when clicking the button
+    // Add to cart logic here
+    console.log('Added to cart');
+  };
 
   return (
     <div 
-      className="relative w-full max-w-sm overflow-hidden shadow-lg group"
+      className="relative w-full max-w-sm overflow-hidden shadow-lg group cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleCardClick}
     >
       <div className="relative aspect-[3/4]">
         <Image 
@@ -38,6 +51,7 @@ const ProductCard = ({ imageUrl, name, brand, price, rating }) => {
               backgroundClip: 'text',
               backgroundImage: 'linear-gradient(90deg, #05FFF0, #064CFF)',
             }}
+            onClick={handleAddToCart}
           >
             Add to cart
           </button>
