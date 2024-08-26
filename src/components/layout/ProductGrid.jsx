@@ -1,36 +1,9 @@
-import React, {useState}from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import ProductCard from '../ui/ProductCard';
 import Pagination from '../ui/Pagination';
 
-const products = [
-  { id: 1, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 2, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 3, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 4, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 5, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 6, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 7, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 8, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 1, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 2, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 3, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 4, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 5, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 6, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 7, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 8, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 1, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 2, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 3, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 4, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 5, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 6, name: 'One Piece Medium', brand: 'Hello World', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 7, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-  { id: 8, name: 'One Piece Medium', brand: 'MIU MIU', price: 3725, rating: 5, imageUrl: '/path-to-image.jpg' },
-];
-
-const ProductGrid = () => {
+const ProductGrid = ({ products }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 8;
     const totalPages = Math.ceil(products.length / productsPerPage);
@@ -82,7 +55,14 @@ const ProductGrid = () => {
           </header>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
+              <ProductCard 
+                key={product.id} 
+                name={product.name}
+                brand={product.category}
+                price={product.price}
+                rating={product.rating}
+                imageUrl={`${product.pathId}`}
+              />
             ))}
           </div>
           <Pagination
@@ -94,5 +74,5 @@ const ProductGrid = () => {
       </div>
     );
   };
-  
+    
   export default ProductGrid;
