@@ -1,82 +1,40 @@
-import React, { useState } from 'react';
+import React from 'react';
 import WhiteFooter from '@/components/layout/Footer'
 import NavbarAuth from '@/components/layout/Navbar'
-import VideoHeaderProduct from '@/components/ui/VideoHeaderProduct'
-import { useRouter } from 'next/router'
-import ProductGallery from '@/components/layout/ProductGallery'
-import { Star, Check, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
-import ProductCard from '@/components/ui/ProductCard';
+import RatingCard from '@/components/ui/RatingCard';
 
-const products = [
-  {
-    imageUrl: '/DressTestpng.png',
-    name: 'One Piece Medium',
-    brand: 'LONG VU',
-    price: 3.725,
-    rating: 4.5,
-    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
-    colors: ['#4F4631', '#314F4A', '#31344F'],
-    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
-  },
-  {
-    imageUrl: '/DressTestpng.png',
-    name: 'One Piece Medium',
-    brand: 'LONG VU',
-    price: 3.725,
-    rating: 4.5,
-    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
-    colors: ['black', 'green', 'blue'],
-    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
-  },
-  {
-    imageUrl: '/DressTestpng.png',
-    name: 'One Piece Medium',
-    brand: 'LONG VU',
-    price: 3.725,
-    rating: 4.5,
-    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
-    colors: ['black', 'green', 'blue'],
-    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
-  },
-  {
-    imageUrl: '/DressTestpng.png',
-    name: 'One Piece Medium',
-    brand: 'LONG VU',
-    price: 3.725,
-    rating: 4.5,
-    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
-    colors: ['black', 'green', 'blue'],
-    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
-  },
-  {
-    imageUrl: '/DressTestpng.png',
-    name: 'One Piece Medium',
-    brand: 'LONG VU',
-    price: 3.725,
-    rating: 4.5,
-    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
-    colors: ['black', 'green', 'blue'],
-    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
-  },
+const ratingItems = [
+  { imageUrl: '/DressTestpng.png', name: 'One Piece Medium', size: 'Medium', color: 'Red' },
+  { imageUrl: '/DressTestpng.png', name: 'One Piece Medium', size: 'Medium', color: 'Red' },
+  { imageUrl: '/DressTestpng.png', name: 'One Piece Medium', size: 'Medium', color: 'Red' },
+  { imageUrl: '/DressTestpng.png', name: 'One Piece Medium', size: 'Medium', color: 'Red' },
+  { imageUrl: '/DressTestpng.png', name: 'One Piece Medium', size: 'Medium', color: 'Red' },
+  { imageUrl: '/DressTestpng.png', name: 'One Piece Medium', size: 'Medium', color: 'Red' },
 ];
 
 export default function Rating() {
-  
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <NavbarAuth />
-      <div className="bg-black pb-40">
-        {/* Add breadcrumb navigation */}
-        <nav className="flex items-center pt-[43px] pl-[30px] mb-[10px] text-[25.455px] font-montserrat" style={{ color: 'rgba(255, 255, 255, 0.60)' }}>
-          <a href="/your" className="inline-flex items-center">
-            Product
-            <Image src="/arrow.png" alt="Arrow" width={25} height={25} className="inline-block mx-[8px]" />
-          </a>
+      <div className="flex-grow bg-black pb-10">
+        <nav className="flex items-center pt-8 pl-8 mb-4 text-2xl font-montserrat text-white/60">
+          <a href="/home" className="hover:text-white">Home</a>
+          <Image src="/arrow.png" alt="Arrow" width={25} height={25} className="inline-block mx-2" />
           <span className="text-white">Rating</span>
         </nav>
-
-       </div>
+        <h1 className="font-kaushan text-white text-center text-7xl mb-10">Rating Your Order</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-8">
+          {ratingItems.map((item, index) => (
+            <RatingCard key={index} {...item} />
+          ))}
+        </div>
+        <div className="flex justify-center mt-10">
+          <button className="border border-white font-montserrat text-white py-2 px-8 hover:bg-white hover:text-black transition duration-300">
+            Submit rating
+          </button>
+        </div>
+      </div>
       <WhiteFooter />
     </div>
   )
