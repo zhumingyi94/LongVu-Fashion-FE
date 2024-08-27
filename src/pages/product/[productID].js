@@ -8,40 +8,122 @@ import { Star, Check, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import ProductCard from '@/components/ui/ProductCard';
 
+const products = [
+  {
+    imageUrl: '/DressTestpng.png',
+    name: 'One Piece Medium',
+    brand: 'LONG VU',
+    price: 3.725,
+    rating: 4.5,
+    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
+    colors: ['#4F4631', '#314F4A', '#31344F'],
+    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
+  },
+  {
+    imageUrl: '/DressTestpng.png',
+    name: 'One Piece Medium',
+    brand: 'LONG VU',
+    price: 3.725,
+    rating: 4.5,
+    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
+    colors: ['black', 'green', 'blue'],
+    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
+  },
+  {
+    imageUrl: '/DressTestpng.png',
+    name: 'One Piece Medium',
+    brand: 'LONG VU',
+    price: 3.725,
+    rating: 4.5,
+    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
+    colors: ['black', 'green', 'blue'],
+    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
+  },
+  {
+    imageUrl: '/DressTestpng.png',
+    name: 'One Piece Medium',
+    brand: 'LONG VU',
+    price: 3.725,
+    rating: 4.5,
+    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
+    colors: ['black', 'green', 'blue'],
+    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
+  },
+  {
+    imageUrl: '/DressTestpng.png',
+    name: 'One Piece Medium',
+    brand: 'LONG VU',
+    price: 3.725,
+    rating: 4.5,
+    description: 'This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style. This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
+    colors: ['black', 'green', 'blue'],
+    sizes: ['Small', 'Medium', 'Large', 'X-Large'],
+  },
+];
+
+function capitalizeEachWord(str) {
+  return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
 export default function ProductDetail() {
   const router = useRouter();
-  const { productId } = router.query;
-  const [product, setProduct] = useState(null);
+  const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedColor, setSelectedColor] = useState('black');
   const [selectedSize, setSelectedSize] = useState('Medium');
-  console.log(productId);
+  const [Product, setProduct] = useState(null);
+
   useEffect(() => {
+    if (!router.isReady) return;
+
+    const productId = router.query.productID;
+    if (!productId) return;
+
     const fetchProduct = async () => {
-      if (productId) {
-        try {
-          const response = await fetch(`/api/product/${productId}`);
-          const data = await response.json();
-          if (data.code === 1000) {
-            setProduct(data.result);
-            console.log(data.result);
-          } else {
-            console.error('Error fetching product:', data.message);
-          }
-        } catch (error) {
-          console.error('Error fetching product:', error);
+      setIsLoading(true);
+      setError(null);
+      try {
+        const token = localStorage.getItem('toklocalen');
+        if (!token) throw new Error('No authentication token found');
+
+        const response = await fetch(`/api/product/getById/${productId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        });
+
+        const data = await response.json();
+        if (data.code === 1000) {
+          setProduct(data.result);
+        } else {
+          throw new Error(data.message || 'Error fetching product');
         }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [router.isReady, router.query]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!Product) return <div>No product found</div>;
+
+  console.log(Product.name);
+
+
+  const product = products[0]; // For demonstration, using the first product
+  const galleryProducts = products.slice(0, 3); // Only take the first 3 products for the gallery
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => prev > 1 ? prev - 1 : 1);
-
-  if (!product) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -63,29 +145,60 @@ export default function ProductDetail() {
         <div className="grid grid-cols-9">
           {/* Left */}
           <div className='col-span-5'>
-            <ProductGallery products={[product]}/>
+            <ProductGallery products={galleryProducts}/>
           </div>
       
           {/* Right */}
           <div className="col-span-4 text-white">
-            <h1 className="font-kaushan text-[85px] ml-[-20px]">{product.name}</h1>
-            <p className="text-[34px] font-light font-montserrat tracing-[-1.35px]">{product.category}</p>
+            <h1 className="font-kaushan text-[65px] mt-4">{capitalizeEachWord(Product.name)}</h1>
+            <p className="text-[34px] font-light font-montserrat tracing-[-1.35px] uppercase">{Product.category}</p>
             <div className="flex items-center mt-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="w-8 h-8 mr-1">
                   <Image
-                    src={i < Math.floor(product.rating) ? "/Star.png" : "/Star-black.png"}
-                    alt={i < Math.floor(product.rating) ? "Rated star" : "Unrated star"}
+                    src={i < Math.floor(Product.rating) ? "/Star.png" : "/Star-black.png"}
+                    alt={i < Math.floor(Product.rating) ? "Rated star" : "Unrated star"}
                     width={32}
                     height={32}
                     layout="responsive"
                   />
                 </div>
               ))}
-              <span className="ml-2 text-lg">{product.rating}/5</span>
+              <span className="ml-2 text-lg">{Product.rating}/5</span>
             </div>
-            <p className="text-[71px] font-[Nakula] tracing-[-2.83px]">${product.price.toFixed(3)}</p>
-            <p className="mb-6 font-montserrat w-[612px]">{product.description}</p>
+            <p className="text-[71px] font-[Nakula] tracing-[-2.83px]">${Product.price.toFixed(2)}</p>
+            <p className="mb-6 font-montserrat w-[612px]">This elegant piece by Vu Van Long is perfect for any sophisticated occasion. Crafted from luxurious, breathable fabrics, it offers superior comfort and timeless style. The designer's attention to detail shines through in every aspect, from the exquisite tailoring to the subtle embellishments. This versatile garment seamlessly transitions from day to evening wear, embodying the essence of modern femininity and grace. Vu Van Long's commitment to quality ensures that this piece not only looks stunning but feels exceptional against the skin.</p>
+            
+            {/* Color selection */}
+            <div className="mb-6">
+              <p className="mb-2 font-montserrat text-lg">Select Colors</p>
+              <div className="flex space-x-4">
+                {product.colors.map((color) => (
+                  <button
+                    key={color}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      selectedColor === color ? 'ring-2 ring-white' : ''
+                    }`}
+                    style={{backgroundColor: color}}
+                    onClick={() => setSelectedColor(color)}
+                  >
+                    {selectedColor === color && <Check className="text-white" size={16} />}
+                  </button>
+                ))}
+                <button className="relative w-[182.769px] h-[36px] bg-black overflow-hidden shadow-[0px_0px_28.523px_0px_rgba(255,255,255,0.25)] group transition-all duration-300 ease-in-out hover:brightness-75">
+                  <div className="absolute inset-0 flex items-center justify-center pb-[3px]">
+                    <Image
+                      src="/VTOn.png"
+                      width={163}
+                      height={29}
+                      alt="VIRTUAL TRY ON"
+                      className="object-contain transition-all duration-300 ease-in-out group-hover:opacity-75"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#00D1FF] to-[#0059FF] opacity-0 group-hover:opacity-20 transition-opacity duration-300 ease-in-out" />
+                </button>
+              </div>
+            </div>
             
             {/* Size selection */}
             <div className="mb-6">
@@ -133,12 +246,22 @@ export default function ProductDetail() {
         <div className='mt-[161px]'>
           <VideoHeaderProduct/>
         </div>
-        {/* Remove or update this section as needed */}
-        <div className="mx-auto mt-[130px] px-[35px]">
-          <div className="flex justify-between items-start mx-[-20px]">
-            {/* You might want to fetch related products here */}
-          </div>
-        </div>
+        <div className="mx-auto mt-[130px] px-[35px] ">
+  <div className="flex justify-between items-start mx-[-20px]">
+    {products.map((product, index) => (
+      <div key={index} className="w-1/5 px-[20px]">
+        <ProductCard
+          imageUrl={product.imageUrl}
+          name={product.name}
+          brand={product.brand}
+          price={product.price}
+          rating={product.rating}
+        />
+      </div>
+    ))}
+  </div>
+</div>
+  
       </div>
       <WhiteFooter />
     </div>

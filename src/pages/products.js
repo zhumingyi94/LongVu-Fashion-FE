@@ -87,7 +87,7 @@ const ProductPage = () => {
       } catch (err) {
         setError(err.message);
         if (err.message === 'No authentication token found') {
-          router.push('/login');
+          router.push('/error');
         }
       } finally {
         setLoading(false);
