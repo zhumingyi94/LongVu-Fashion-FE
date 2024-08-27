@@ -4,7 +4,7 @@ import ProductCardSmall from '../ui/ProductCardSmall';
 
 const ProductGallery = ({ products }) => {
   const [selectedProduct, setSelectedProduct] = useState(products[0]); // Initialize with the first product
-
+  
   useEffect(() => {
     setSelectedProduct(products[0]); // Ensure the first product is selected on mount or when products change
   }, [products]);
@@ -16,7 +16,7 @@ const ProductGallery = ({ products }) => {
         {products.map((product, index) => (
           <ProductCardSmall
             key={index}
-            imageUrl={product.imageUrl}
+            imageUrl={product}
             selected={product === selectedProduct} // Highlight if selected
             onClick={() => setSelectedProduct(product)} // Set as selected on click
           />
@@ -26,7 +26,7 @@ const ProductGallery = ({ products }) => {
       {/* Main Product Detail */}
       <div className="flex-1 ml-[100px]">
         <ProductCardDetail
-          imageUrl={selectedProduct.imageUrl}
+          imageUrl={selectedProduct}
           name={selectedProduct.name}
           brand={selectedProduct.brand}
           price={selectedProduct.price}

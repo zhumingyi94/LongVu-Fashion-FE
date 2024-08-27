@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -7,13 +7,35 @@ import WhiteFooter from '@/components/layout/Footer';
 import NavbarAuth from '@/components/layout/Navbar';
 import FilterSection from '@/components/ui/FilterSection';
 import ProductGrid from '@/components/layout/ProductGrid';
+import FashionLoadingAnimation from '@/components/layout/FashionLoadingAnimation';
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [mapper, setMapper] = useState({});
   const router = useRouter();
+
+  useEffect(() => {
+    // Ensure minimum loading time for animation
+    const timer = setTimeout(() => {
+      setAnimationComplete(true);
+    }, 3000); // 3 seconds for the full animation sequence
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLoadingComplete = useCallback(() => {
+    setAnimationComplete(true);
+  }, []);
+
+  useEffect(() => {
+    if (animationComplete && dataLoaded) {
+      setIsLoading(false);
+    }
+  }, [animationComplete, dataLoaded]);
 
   useEffect(() => {
     const fetchMapperAndProducts = async () => {
@@ -21,7 +43,7 @@ const ProductPage = () => {
         // Fetch and parse the CSV file
         const mapperResponse = await fetch('/link_mapper.csv');
         const mapperText = await mapperResponse.text();
-        
+
         Papa.parse(mapperText, {
           header: true,
           complete: (results) => {
@@ -38,7 +60,7 @@ const ProductPage = () => {
         });
       } catch (err) {
         setError(err.message);
-        setLoading(false);
+        setDataLoaded(true);
       }
     };
 
@@ -81,7 +103,7 @@ const ProductPage = () => {
           });
           setProducts(mappedProducts);
           console.log(mappedProducts);
-        }else {
+        } else {
           throw new Error('Invalid data format received from server');
         }
       } catch (err) {
@@ -90,12 +112,16 @@ const ProductPage = () => {
           router.push('/error');
         }
       } finally {
-        setLoading(false);
+        setDataLoaded(true);
       }
     };
 
     fetchMapperAndProducts();
   }, [router]);
+
+  if (isLoading) {
+    return <FashionLoadingAnimation onLoadingComplete={handleLoadingComplete} />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-black relative">
@@ -105,9 +131,7 @@ const ProductPage = () => {
           <FilterSection />
         </aside>
         <section className="flex-grow">
-          {loading ? (
-            <p className="text-white text-center">Loading products...</p>
-          ) : error ? (
+          {error ? (
             <p className="text-red-500 text-center">{error}</p>
           ) : (
             <ProductGrid products={products} />
