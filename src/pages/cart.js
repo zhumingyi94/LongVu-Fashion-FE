@@ -181,8 +181,19 @@ export default function Cart() {
         throw new Error('Failed to delete item from cart');
       }
 
-      // Refetch cart data after successful deletion
-      await fetchCartData();
+      // Update local state instead of refetching all cart data
+      setCartData(prevCartData => ({
+        ...prevCartData,
+        cartItems: prevCartData.cartItems.filter(cartItem => cartItem.id !== item.id)
+      }));
+
+      // Remove the product details for the deleted item
+      setProductDetails(prevDetails => {
+        const newDetails = { ...prevDetails };
+        delete newDetails[item.product_id];
+        return newDetails;
+      });
+
       setDeleteError(null);
     } catch (error) {
       console.error('Error deleting item from cart:', error);
@@ -230,7 +241,7 @@ export default function Cart() {
             {cartData && cartData.cartItems.map((item) => (
               <CartCard
                 key={item.id}
-                imageUrl={productDetails[item.product_id].imageUrl}
+                imageUrl={productDetails[item.product_id]?.imageUrl || "/api/placeholder/154/239"}
                 name={capitalizeWords(productDetails[item.product_id]?.name) || "Loading..."}
                 price={item.price}
                 size={item.size}
