@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import WhiteFooter from '@/components/layout/Footer'
 import NavbarAuth from '@/components/layout/Navbar'
 import { ArrowRight } from 'lucide-react';
@@ -12,6 +13,7 @@ const capitalizeWords = (str) => {
 };
 
 export default function Cart() {
+  const router = useRouter();
   const [cartData, setCartData] = useState(null);
   const [productDetails, setProductDetails] = useState({});
   const [address, setAddress] = useState('');
@@ -19,6 +21,7 @@ export default function Cart() {
   const [isLoading, setIsLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [mapper, setMapper] = useState({});
+  const [checkoutError, setCheckoutError] = useState(null);
 
   useEffect(() => {
     const fetchMapperAndCartData = async () => {
@@ -124,7 +127,6 @@ export default function Cart() {
             name: capitalizeWords(data.result.name),
             imageUrl: imageUrl
           };
-          console.log("Details: ", details);
         } else {
           throw new Error(data.message || `Error fetching product details for ID: ${item.product_id}`);
         }
@@ -135,7 +137,6 @@ export default function Cart() {
     }
     setProductDetails(details);
   };
-
 
   const calculateSubtotal = () => {
     return cartData ? cartData.cartItems.reduce((total, item) => total + item.price * item.quantity, 0) : 0;
@@ -212,6 +213,56 @@ export default function Cart() {
     }));
   };
 
+  const handleCheckout = async () => {
+    if (!address.trim()) {
+      setCheckoutError("Please enter your address before proceeding to checkout.");
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('toklocalen');
+
+    if (!userId || !token) {
+      setCheckoutError('User not logged in');
+      return;
+    }
+
+    const subtotal = calculateSubtotal();
+    const total_cost = calculateTotal();
+    const shipping_cost = 15; // As defined in calculateTotal
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/user/${userId}/order`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paid: true, // Set to false initially, can be updated after payment
+          status: "Pending", // Initial status
+          address: address,
+          total_cost: total_cost,
+          shipping_cost: shipping_cost
+        })
+      });
+      console.log("Response: ", response);
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      const orderData = await response.json();
+      // Redirect to a confirmation page or handle successful order creation
+      router.push(`/order-confirmation/${orderData.id}`);
+    } catch (error) {
+      console.error('Error creating order:', error);
+      setCheckoutError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (error) {
     return <div className="bg-black text-white min-h-screen flex items-center justify-center">{error}</div>;
   }
@@ -236,7 +287,7 @@ export default function Cart() {
             {deleteError}
           </div>
         )}
-        <div className="flex justify-between px-[30px] py-[20px]">
+        <div className="flex justify-between px-[30px] py-[20px] pb-[150px]">
           <div className="w-[860px] space-y-4">
             {cartData && cartData.cartItems.map((item) => (
               <CartCard
@@ -247,15 +298,8 @@ export default function Cart() {
                 size={item.size}
                 color={item.color}
                 quantity={item.quantity}
-                onDelete={() => handleRemoveItem({
-                  id: item.id,
-                  product_id: item.product_id,
-                  quantity: item.quantity,
-                  price: item.price,
-                  rating: item.rating,
-                  size: item.size,
-                  color: item.color
-                })}
+                onDelete={() => handleRemoveItem(item)}
+                stockQuantity={productDetails[item.product_id]?.stockQuantity || 2}
                 onUpdateQuantity={(newQuantity) => updateItemQuantity(item.id, newQuantity)}
               />
             ))}
@@ -284,7 +328,15 @@ export default function Cart() {
                 <span>${calculateTotal().toFixed(2)}</span>
               </div>
             </div>
-            <button className="w-full font-montserrat bg-white text-black py-4 text-[18px] font-semibold flex items-center justify-center mb-6 transition-all duration-300 ease-in-out hover:bg-transparent hover:text-white hover:border hover:border-white">
+            {checkoutError && (
+              <div className="bg-red-500 text-white p-2 mb-4 text-center">
+                {checkoutError}
+              </div>
+            )}
+            <button 
+              onClick={handleCheckout}
+              className="w-full font-montserrat bg-white text-black py-4 text-[18px] font-semibold flex items-center justify-center mb-6 transition-all duration-300 ease-in-out hover:bg-transparent hover:text-white hover:border hover:border-white"
+            >
               Go to Checkout
               <ArrowRight className="ml-2" />
             </button>
@@ -303,5 +355,5 @@ export default function Cart() {
       </div>
       <WhiteFooter />
     </div>
-  )
+  );
 }

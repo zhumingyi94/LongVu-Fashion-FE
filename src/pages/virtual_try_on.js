@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import WhiteFooter from '@/components/layout/Footer'
 import NavbarAuth from '@/components/layout/Navbar'
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 export default function VirtualTryOn() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [resultImage, setResultImage] = useState(null);
-
+  const router = useRouter();
+  const {productLink} = router.query;
+  console.log("Product link: ", productLink);
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {

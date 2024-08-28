@@ -2,7 +2,7 @@ import React from 'react';
 import { Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 
-const CartCard = ({ imageUrl, name, size, color, price, quantity, onDelete, onUpdateQuantity }) => {
+const CartCard = ({ imageUrl, name, size, color, price, quantity, stockQuantity, onDelete, onUpdateQuantity }) => {
   const incrementQuantity = () => onUpdateQuantity(quantity + 1);
   const decrementQuantity = () => onUpdateQuantity(Math.max(1, quantity - 1));
 
@@ -31,7 +31,7 @@ const CartCard = ({ imageUrl, name, size, color, price, quantity, onDelete, onUp
           <p className="text-[24px] font-montserrat text-gray-400"><span className="text-white">Color:</span> {color}</p>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-[40px] font-bold font-montserrat">${price}</span>
+          <span className="text-[40px] font-bold font-montserrat">${price.toFixed(2)}</span>
         </div>
       </div>
       <div className="flex flex-col items-end justify-between h-full ml-4">
@@ -47,14 +47,14 @@ const CartCard = ({ imageUrl, name, size, color, price, quantity, onDelete, onUp
             className="transition-all duration-300 ease-in-out group-hover:opacity-80"
           />
         </button>
-        <div className="flex items-center justify-between w-32 bg-white text-black h-[52px]">
+        <div className="flex items-center justify-between w-38 bg-white text-black h-[52px]">
           <button 
             onClick={decrementQuantity} 
             className="px-3 py-2 hover:bg-gray-200 rounded-l-md"
           >
             <Minus size={16} />
           </button>
-          <span className="mx-2 font-semibold">{quantity}</span>
+          <span className="mx-2 font-semibold">{quantity}/{stockQuantity}</span>
           <button 
             onClick={incrementQuantity} 
             className="px-3 py-2 hover:bg-gray-200 rounded-r-md"

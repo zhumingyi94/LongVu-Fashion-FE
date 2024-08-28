@@ -11,6 +11,7 @@ import ProductGallery from '@/components/layout/ProductGallery';
 import ProductCard from '@/components/ui/ProductCard';
 import FashionLoadingAnimation from '@/components/layout/FashionLoadingAnimation';
 import RecommendationLoading from '@/components/layout/RecommendationLoading';
+import Alert, {AlertDescription} from '@/components/ui/Alert';  
 
 function capitalizeEachWord(str) {
   return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -31,6 +32,9 @@ export default function ProductDetail() {
   const [userId, setUserId] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [notification, setNotification] = useState(null);
+  const [quantityError, setQuantityError] = useState('');
+
+
   const showNotification = (message) => {
   setNotification(message);
   setTimeout(() => setNotification(null), 3000); // Hide after 3 seconds
@@ -203,11 +207,32 @@ export default function ProductDetail() {
 
   
   const handleVirtualTryOn = () => {
-    router.push('/virtual_try_on');
+    if (product && product.pathId) {
+      const virtualTryOnLink = `${product.pathId}${lastPart}_0.jpeg`;
+      router.push({
+        pathname: '/virtual_try_on',
+        query: { productLink: virtualTryOnLink }
+      });
+    } else {
+      console.error('Product or product path is not available');
+      // You might want to show an error message to the user here
+    }
   };
 
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => prev > 1 ? prev - 1 : 1);
+  const incrementQuantity = () => {
+  if (quantity < product.stockQuantity) {
+    setQuantity(prev => prev + 1);
+    setQuantityError('');
+  } else {
+    setQuantityError('Cannot exceed available stock');
+  }
+};
+const decrementQuantity = () => {
+  if (quantity > 1) {
+    setQuantity(prev => prev - 1);
+    setQuantityError('');
+  }
+};
 
   if (isLoading) {
     return <FashionLoadingAnimation onLoadingComplete={handleLoadingComplete} />;
@@ -226,6 +251,10 @@ export default function ProductDetail() {
   console.log("Id: ", product.id);
   // Add to Cart
   const addToCart = async (product, quantity, selectedSize, selectedColor) => {
+    if (quantity > product.stockQuantity) {
+      setQuantityError('Cannot add more items than available in stock');
+      return;
+    }
     const userId = localStorage.getItem('userId');
     
     if (!userId) {
@@ -267,6 +296,7 @@ export default function ProductDetail() {
       console.error('Error adding item to cart:', error);
       // Handle the error (e.g., show an error message to the user)
     }
+    setQuantityError('');
   };
 
 
@@ -275,6 +305,11 @@ export default function ProductDetail() {
     <div>
       <NavbarAuth />
       <div className="bg-black pb-40">
+      {quantityError && (
+        <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded shadow-lg z-50 transition-opacity duration-300">
+        {quantityError}
+      </div>
+      )}
       {notification && (
   <div className="fixed top-20 right-4 bg-green-500 text-white p-4 rounded shadow-lg z-50 transition-opacity duration-300">
     {notification}
@@ -373,14 +408,14 @@ export default function ProductDetail() {
             </div>
 
             <div className="mb-6 flex flex-row items-center gap-[20px]">
-              <div className="flex items-center justify-between w-32 bg-white text-black h-[52px]">
+              <div className="flex items-center justify-between w- bg-white text-black h-[52px]">
                 <button 
                   onClick={decrementQuantity} 
                   className="px-3 py-2 hover:bg-gray-200 rounded-l-md"
                 >
                   <Minus size={16} />
                 </button>
-                <span className="mx-2 font-semibold">{quantity}</span>
+                <span className="mx-2 font-semibold">{quantity}/{product.stockQuantity}</span>
                 <button 
                   onClick={incrementQuantity} 
                   className="px-3 py-2 hover:bg-gray-200 rounded-r-md"

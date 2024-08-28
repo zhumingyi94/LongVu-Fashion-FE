@@ -62,7 +62,7 @@ const NavbarAuth = () => {
           <SearchBar placeholder="Find your favorite clothes" />
         </div>
         <div className="flex items-center shrink-0">
-          <Link href="/contact" className={`${linkClass} ${hoverClass} mr-[56px]`}>CONTACT</Link>
+          <Link href="/orders" className={`${linkClass} ${hoverClass} mr-[56px]`}>HISTORY</Link>
           <Link href="/notifications" className={`${iconClass} mr-[56px]`}>
             <Image 
               src={bellSrc} 

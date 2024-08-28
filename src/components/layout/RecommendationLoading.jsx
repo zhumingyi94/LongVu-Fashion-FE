@@ -70,7 +70,7 @@ export default function RecommendationLoading() {
           animation: 'gradientMove 2s infinite',
         }}
       >
-        LOADING
+        AI ENGINE RUNNING
       </div>
 
       <style jsx>{`
