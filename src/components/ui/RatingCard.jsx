@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const RatingCard = ({ imageUrl, name, size, color, initialRating = 0 }) => {
+const RatingCard = ({ id, product_id, imageUrl, name, size, color, initialRating = 0, onRatingChange }) => {
   const [rating, setRating] = useState(initialRating);
 
   const handleRating = (selectedRating) => {
     setRating(selectedRating);
+    onRatingChange(id, selectedRating);
   };
 
   return (

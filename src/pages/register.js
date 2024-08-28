@@ -4,6 +4,7 @@ import Image from 'next/image';
 import SearchBar from '@/components/ui/SearchBar';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import CryptoJS from 'crypto-js';
 
 const CustomAlert = ({ message, type }) => (
   <div className={`p-4 mb-4 rounded-md ${type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
@@ -61,16 +62,29 @@ const Register = () => {
     });
   };
 
+  const hashData = (data) => {
+    return CryptoJS.SHA256(data).toString();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
+        // Hash username and password
+        const hashedUsername = hashData(formData.username);
+        const hashedPassword = hashData(formData.password);
+        console.log("Password: ", hashedPassword);
+        console.log("Username: ", hashedUsername);
         const response = await fetch('/api/user', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            username: hashedUsername,
+            password: hashedPassword,
+          }),
         });
 
         if (response.ok) {

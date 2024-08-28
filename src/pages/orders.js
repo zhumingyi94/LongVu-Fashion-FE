@@ -6,12 +6,12 @@ import Image from 'next/image';
 import OrderCard from '@/components/ui/OrderCard';
 import Papa from 'papaparse';
 import FashionLoadingAnimation from '@/components/layout/FashionLoadingAnimation';
+import Button from '@/components/ui/Button';
 
 const capitalizeWords = (str) => {
   if (typeof str !== 'string' || !str) return '';
   return str.replace(/\b\w/g, char => char.toUpperCase());
 };
-
 
 export default function OrderHistory() {
   const router = useRouter();
@@ -20,9 +20,17 @@ export default function OrderHistory() {
   const [error, setError] = useState(null);
   const [mapper, setMapper] = useState({});
   const [animationComplete, setAnimationComplete] = useState(false);
+
   const handleLoadingComplete = useCallback(() => {
     setAnimationComplete(true);
   }, []);
+
+  const handleClick = (order) => {
+    router.push({
+      pathname: '/rating',
+      query: { orderData: JSON.stringify(order) },
+    });
+  }
 
   useEffect(() => {
     const fetchMapperAndOrderHistory = async () => {
@@ -171,7 +179,6 @@ export default function OrderHistory() {
     return <FashionLoadingAnimation onLoadingComplete={handleLoadingComplete} />;
   }
 
-  
   return (
     <div>
       <NavbarAuth />
@@ -186,13 +193,13 @@ export default function OrderHistory() {
         <h1 className='text-white font-kaushan text-center text-[60px] mb-[40px]'>Order History</h1>
 
         <div className="px-[30px] py-[20px]">
-          <div className="space-y-[60px]"> {/* Increased space between orders */}
+          <div className="space-y-[60px]">
             {orders.map((order, index) => (
               <div key={order.id} className="p-6 rounded-lg">
                 <h2 className='text-white font-montserrat font-bold text-[32px] mb-6'>Order #{index + 1}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> {/* Increased gap between cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                   {order.items.map((item) => (
-                    <div key={item.id} className="p-4 rounded-lg"> {/* Added background and padding to each card */}
+                    <div key={item.id} className="p-4 rounded-lg">
                       <OrderCard
                         imageUrl={item.productDetails.imageUrl}
                         name={item.productDetails.name}
@@ -208,7 +215,13 @@ export default function OrderHistory() {
                   <p><span className="font-bold">Total Cost:</span> ${order.total_cost.toFixed(2)}</p>
                   <p><span className="font-bold">Status:</span> {order.status}</p>
                   <p><span className="font-bold">Address:</span> {order.address}</p>
-                  <p><span className="font-bold">Order Date:</span>  {new Date(order.create_at).toLocaleDateString()}</p>
+                  <p><span className="font-bold">Order Date:</span> {new Date(order.create_at).toLocaleDateString()}</p>
+                  <div className='pt-[50px]'>
+                    <Button 
+                      button_text="RATING ORDER" 
+                      onClick={() => handleClick(order)}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
