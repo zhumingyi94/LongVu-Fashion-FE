@@ -13,26 +13,49 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch('/api/auth/token', {
+      const loginResponse = await fetch('/api/auth/token', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
       });
-
-      const data = await response.json();
-
-      if (data.code === 1000 && data.result.success) {
-        // Correct usage of localStorage
-        localStorage.setItem('toklocalen', data.result.token);
-        router.push('/products');
+  
+      const loginData = await loginResponse.json();
+  
+      if (loginData.code === 1000 && loginData.result.success) {
+        // Save token to localStorage
+        localStorage.setItem('toklocalen', loginData.result.token);
+  
+        // Fetch user info
+        const userInfoResponse = await fetch('/api/user/my-info', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${loginData.result.token}`,
+          },
+        });
+  
+        const userInfoData = await userInfoResponse.json();
+  
+        if (userInfoData.code === 1000 && userInfoData.result) {
+          // Save userId to localStorage
+          localStorage.setItem('userId', userInfoData.result.id);
+          
+          // Optionally, you can save other user information if needed
+          localStorage.setItem('username', userInfoData.result.username);
+          localStorage.setItem('email', userInfoData.result.email);
+          
+          router.push('/products');
+        } else {
+          setError(userInfoData.message || 'Failed to fetch user information. Please try again.');
+        }
       } else {
-        setError(data.message || 'Login failed. Please try again.');
+        setError(loginData.message || 'Login failed. Please try again.');
       }
     } catch (error) {
+      console.error('Error during login process:', error);
       setError('An error occurred. Please try again later.');
     }
   };

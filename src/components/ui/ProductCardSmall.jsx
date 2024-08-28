@@ -11,17 +11,17 @@ const ProductCardSmall = ({ imageUrl, selected, onClick }) => {
       }`}
       onClick={onClick}
     >
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full text-white font-montserrat">
         <Image
           src={imageUrl}
-          alt="Product Image"
+          alt="Not have other image"
           layout="fill"
           objectFit="cover"
         />
-        <div className="absolute bottom-[4px] right-[10px] w-[58px] h-[34px]">
+        <div className="absolute bottom-[4px] right-[10px] w-[58px] h-[34px] font-montserrat text-white">
           <Image
             src="/SmallLogo.png"
-            alt="Logo"
+            alt="Not have other image"
             layout="fill"
             objectFit="contain"
           />

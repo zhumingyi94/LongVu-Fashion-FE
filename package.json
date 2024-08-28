@@ -16,6 +16,7 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@gradio/client": "^1.5.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",

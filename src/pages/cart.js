@@ -1,29 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WhiteFooter from '@/components/layout/Footer'
 import NavbarAuth from '@/components/layout/Navbar'
-import { useRouter } from 'next/router'
-import { Star, Check, Minus, Plus, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import CartCard from '@/components/ui/CartCard';
 
-const products = [
-  {
-    imageUrl: '/DressTestpng.png',
-    name: 'One Piece Medium',
-    brand: 'LONG VU',
-    price: 180,
-    size: 'Medium',
-    color: 'Red',
-  },
-  // ... other products
-];
+const capitalizeWords = (str) => {
+  return str.replace(/\b\w/g, char => char.toUpperCase());
+};
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState(products);
+  const [cartData, setCartData] = useState(null);
+  const [productDetails, setProductDetails] = useState({});
   const [address, setAddress] = useState('');
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+
+  const fetchCartData = async () => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('toklocalen');
+
+    if (!userId || !token) {
+      setError('User not logged in');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/user/${userId}/cart`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart data');
+      }
+
+      const data = await response.json();
+      if (data.code === 1000) {
+        setCartData(data.result);
+        fetchProductDetails(data.result.cartItems);
+      } else {
+        throw new Error(data.message || 'Error fetching cart data');
+      }
+    } catch (error) {
+      console.error('Error fetching cart data:', error);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchProductDetails = async (cartItems) => {
+    const token = localStorage.getItem('toklocalen');
+    const details = {};
+
+    for (const item of cartItems) {
+      try {
+        const response = await fetch(`/api/product/getById/${item.product_id}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch product details for ID: ${item.product_id}`);
+        }
+
+        const data = await response.json();
+        console.log("Data cart:", data);
+        if (data.code === 1000) {
+          details[item.product_id] = data.result;
+        } else {
+          throw new Error(data.message || `Error fetching product details for ID: ${item.product_id}`);
+        }
+      } catch (error) {
+        console.error(error);
+        details[item.product_id] = { name: "Product Name Unavailable" };
+      }
+    }
+
+    setProductDetails(details);
+  };
+
+  useEffect(() => {
+    fetchCartData();
+  }, []);
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + item.price, 0);
+    return cartData ? cartData.cartItems.reduce((total, item) => total + item.price * item.quantity, 0) : 0;
   };
 
   const calculateDiscount = () => {
@@ -34,9 +105,65 @@ export default function Cart() {
     return calculateSubtotal() - calculateDiscount() + 15; // 15 is the delivery fee
   };
 
-  const handleRemoveItem = (index) => {
-    setCartItems(cartItems.filter((_, i) => i !== index));
+  const handleRemoveItem = async (item) => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('toklocalen');
+
+    if (!userId || !token) {
+      setDeleteError('User not logged in');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/user/${userId}/cart/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: item.id,
+          product_id: item.product_id,
+          quantity: item.quantity,
+          price: item.price,
+          rating: item.rating,
+          size: item.size,
+          color: item.color
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete item from cart');
+      }
+
+      // Refetch cart data after successful deletion
+      await fetchCartData();
+      setDeleteError(null);
+    } catch (error) {
+      console.error('Error deleting item from cart:', error);
+      setDeleteError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const updateItemQuantity = (itemId, newQuantity) => {
+    setCartData(prevData => ({
+      ...prevData,
+      cartItems: prevData.cartItems.map(item =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    }));
+  };
+
+  if (error) {
+    return <div className="bg-black text-white min-h-screen flex items-center justify-center">{error}</div>;
+  }
+
+  if (isLoading && !cartData) {
+    return <div className="bg-black text-white min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div>
@@ -49,17 +176,32 @@ export default function Cart() {
           </a>
           <span className="text-white">Cart</span>
         </nav>
+        {deleteError && (
+          <div className="bg-red-500 text-white p-2 mb-4 text-center">
+            {deleteError}
+          </div>
+        )}
         <div className="flex justify-between px-[30px] py-[20px]">
           <div className="w-[860px] space-y-4">
-            {cartItems.map((item, index) => (
+            {cartData && cartData.cartItems.map((item) => (
               <CartCard
-                key={index}
-                imageUrl={item.imageUrl}
-                name={item.name}
+                key={item.id}
+                imageUrl={`/api/product/${item.product_id}/image`}
+                name={capitalizeWords(productDetails[item.product_id]?.name) || "Loading..."}
                 price={item.price}
                 size={item.size}
                 color={item.color}
-                onDelete={() => handleRemoveItem(index)}
+                quantity={item.quantity}
+                onDelete={() => handleRemoveItem({
+                  id: item.id,
+                  product_id: item.product_id,
+                  quantity: item.quantity,
+                  price: item.price,
+                  rating: item.rating,
+                  size: item.size,
+                  color: item.color
+                })}
+                onUpdateQuantity={(newQuantity) => updateItemQuantity(item.id, newQuantity)}
               />
             ))}
           </div>
@@ -68,14 +210,14 @@ export default function Cart() {
             <div className="space-y-4 mb-6 font-montserrat">
               <div className="flex justify-between text-[20px]">
                 <span>Subtotal</span>
-                <span>${calculateSubtotal()}</span>
+                <span>${calculateSubtotal().toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-[20px] font-bold font-montserrat">
                 <span className="bg-gradient-to-r from-[#05FFF0] to-[#064CFF] bg-clip-text text-transparent">
                   Discount (-20%)
                 </span>
                 <span className="bg-gradient-to-r from-[#05FFF0] to-[#064CFF] bg-clip-text text-transparent">
-                  -${calculateDiscount()}
+                  -${calculateDiscount().toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-[20px] font-montserrat">
@@ -84,7 +226,7 @@ export default function Cart() {
               </div>
               <div className="flex justify-between text-[24px] font-bold mt-4 font-montserrat">
                 <span>Total</span>
-                <span>${calculateTotal()}</span>
+                <span>${calculateTotal().toFixed(2)}</span>
               </div>
             </div>
             <button className="w-full font-montserrat bg-white text-black py-4 text-[18px] font-semibold flex items-center justify-center mb-6 transition-all duration-300 ease-in-out hover:bg-transparent hover:text-white hover:border hover:border-white">

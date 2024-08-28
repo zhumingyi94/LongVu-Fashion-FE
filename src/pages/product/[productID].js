@@ -10,6 +10,7 @@ import VideoHeaderProduct from '@/components/ui/VideoHeaderProduct';
 import ProductGallery from '@/components/layout/ProductGallery';
 import ProductCard from '@/components/ui/ProductCard';
 import FashionLoadingAnimation from '@/components/layout/FashionLoadingAnimation';
+import RecommendationLoading from '@/components/layout/RecommendationLoading';
 
 function capitalizeEachWord(str) {
   return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -23,12 +24,18 @@ export default function ProductDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [selectedColor, setSelectedColor] = useState('black');
-  const [selectedSize, setSelectedSize] = useState('Medium');
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
   const [product, setProduct] = useState(null);
   const [mapper, setMapper] = useState({});
   const [userId, setUserId] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [notification, setNotification] = useState(null);
+  const showNotification = (message) => {
+  setNotification(message);
+  setTimeout(() => setNotification(null), 3000); // Hide after 3 seconds
+};
+
 
   const colors = ['#4F4631', '#314F4A', '#31344F'];
   const sizes = ['Small', 'Medium', 'Large', 'X-Large'];
@@ -106,6 +113,7 @@ export default function ProductDetail() {
             ...data.result,
             pathId: newPathId
           });
+          console.log("Product: ", product);
         } else {
           throw new Error(data.message || 'Error fetching product');
         }
@@ -146,13 +154,13 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (!userId || Object.keys(mapper).length === 0) return;
-
+  
     const fetchRecommendationProducts = async () => {
       setIsRecommendationLoading(true);
       try {
         const token = localStorage.getItem('toklocalen');
         if (!token) throw new Error('No authentication token found');
-
+  
         const response = await fetch(`/api/user/recommend/${userId}`, {
           method: 'GET',
           headers: {
@@ -161,30 +169,25 @@ export default function ProductDetail() {
           },
         });
         const data = await response.json();
-
-        // if (data.code === 1000 && Array.isArray(data.result)) {
-        //   const processedRecommendations = data.result.map(item => {
-        //     let newPathId = mapper[item.pathId] || item.pathId;
-        //     newPathId = `/api/${newPathId}/`;
-        //     const parts = newPathId.split('/');
-        //     const lastPart = parts[parts.length - 2];
-        //     const imagePaths = Array.from({ length: 3 }, (_, i) => `${newPathId}${lastPart}_${i}.jpeg`);
-
-        //     return {
-        //       ...item,
-        //       imagePaths
-        //     };
-        //   });
-        //   setRecommendations(processedRecommendations);
-        // } else {
-        //   throw new Error(data.message || 'Error fetching recommendations');
-        // }
-        // console.log("Recommendation lists:", processedRecommendations);
-        if (data.code === 1000) {
-           for(i = 0; i < 9; i++) {
-            console.log("Item ${i}: ", data.result[i]);
-           }
+  
+        if (data.code === 1000 && Array.isArray(data.result)) {
+          const mappedProducts = data.result.map(item => {
+            let newPathId = mapper[item.pathId] || item.pathId;
+            const parts = newPathId.split('/');
+            const lastPart = parts[parts.length - 1];
+            newPathId = `/api/${newPathId}/${lastPart}_0.jpeg`;
+            return {
+              ...item, 
+              pathId: newPathId
+            };
+          });
+          setRecommendations(mappedProducts);
+          console.log("Mapped Products:", mappedProducts);
+        } else {
+          console.error('Invalid data format or code:', data);
+          // Optionally set an error state or handle the invalid data case
         }
+  
         console.log("Data: ", data);
         console.log("User ID:", userId);
       } catch (error) {
@@ -194,10 +197,11 @@ export default function ProductDetail() {
         setIsRecommendationLoading(false);
       }
     };
-
+  
     fetchRecommendationProducts();
   }, [userId, mapper]);
 
+  
   const handleVirtualTryOn = () => {
     router.push('/virtual_try_on');
   };
@@ -216,11 +220,67 @@ export default function ProductDetail() {
   const parts = pathIds.split('/');
   const lastPart = parts[parts.length - 2];
   const newPathIds = Array.from({ length: 3 }, (_, i) => `${pathIds}${lastPart}_${i}.jpeg`);
+  console.log("Link: ", newPathIds);
+  console.log("Recommendations: ", recommendations);
+
+  console.log("Id: ", product.id);
+  // Add to Cart
+  const addToCart = async (product, quantity, selectedSize, selectedColor) => {
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+      console.error('User ID not found in localStorage');
+      // You might want to redirect to login page or show an error message
+      return;
+    }
+  
+    const url = `/api/user/${userId}/cart/add`;
+  
+    const bodyData = {
+      product_id: product.id,
+      quantity: quantity,
+      price: product.price,
+      rating: product.rating,
+      size: selectedSize,
+      color: selectedColor
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('toklocalen')}`
+        },
+        body: JSON.stringify(bodyData)
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to add item to cart');
+      }
+  
+      const data = await response.json();
+      console.log('Item added to cart successfully', data);
+      showNotification(`${product.name} has been added to your cart!`);
+      // You might want to update the UI or state here to reflect the cart change
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+      // Handle the error (e.g., show an error message to the user)
+    }
+  };
+
+
 
   return (
     <div>
       <NavbarAuth />
       <div className="bg-black pb-40">
+      {notification && (
+  <div className="fixed top-20 right-4 bg-green-500 text-white p-4 rounded shadow-lg z-50 transition-opacity duration-300">
+    {notification}
+  </div>
+)}
+
         <nav className="flex items-center pt-[43px] pl-[30px] mb-[10px] text-[25.455px] font-montserrat" style={{ color: 'rgba(255, 255, 255, 0.60)' }}>
           <a href="/" className="inline-flex items-center">
             Home
@@ -268,7 +328,8 @@ export default function ProductDetail() {
                       selectedColor === color ? 'ring-2 ring-white' : ''
                     }`}
                     style={{backgroundColor: color}}
-                    onClick={() => setSelectedColor(color)}
+                    onClick={() => {setSelectedColor(color);
+                    }}
                   >
                     {selectedColor === color && <Check className="text-white" size={16} />}
                   </button>
@@ -302,7 +363,8 @@ export default function ProductDetail() {
                         ? 'bg-white text-black border-2 border-white' 
                         : 'bg-black text-white border border-white hover:bg-white hover:text-black'
                       }`}
-                    onClick={() => setSelectedSize(size)}
+                    onClick={() => {setSelectedSize(size);
+                    }}
                   >
                     {size}
                   </button>
@@ -326,7 +388,10 @@ export default function ProductDetail() {
                   <Plus size={16} />
                 </button>
               </div>
-              <button className="group w-full bg-transparent h-[52px] !w-[350px] text-white font-montserrat font-light text-[16px] border border-white transition-all duration-300 ease-in-out hover:bg-white hover:text-black">
+              <button className="group w-full bg-transparent h-[52px] !w-[350px] text-white font-montserrat 
+              font-light text-[16px] border border-white transition-all duration-300 ease-in-out hover:bg-white hover:text-black"
+              onClick={() => addToCart(product, quantity, selectedSize, selectedColor)}
+              >
                 Add to Cart
               </button>
             </div>
@@ -338,16 +403,17 @@ export default function ProductDetail() {
         <div className="mx-auto mt-[130px] px-[35px]">
           <div className="flex justify-between items-start mx-[-20px] text-white">
             {isRecommendationLoading ? (
-              <div>Loading recommendations...</div>
+              <RecommendationLoading />
             ) : recommendations && recommendations.length > 0 ? (
               recommendations.map((product, index) => (
                 <div key={index} className="w-1/5 px-[20px]">
                   <ProductCard
-                    imageUrl={product.imageUrl}
+                    imageUrl={product.pathId}
                     name={product.name}
                     brand={product.brand}
                     price={product.price}
                     rating={product.rating}
+                    productId={product.id}
                   />
                 </div>
               ))

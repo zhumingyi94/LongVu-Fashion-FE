@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import SearchBar from '../ui/SearchBar';
-
+import { useRouter } from 'next/router';
 const NavbarAuth = () => {
   const [activeSection, setActiveSection] = useState('WOMEN');
   const [bellSrc, setBellSrc] = useState('/Bell_light.png');
   const [cartSrc, setCartSrc] = useState('/Cart.png');
-
+  const router = useRouter();
   const ICON_SIZE = 29.62;
 
   const linkClass = "font-light font-montserrat relative text-white text-[20.83px] tracking-[2.083px]";
@@ -20,6 +20,9 @@ const NavbarAuth = () => {
     setActiveSection(section);
   };
 
+  const handleCartClick = () => {
+    router.push('/cart');
+  }
   return (
     <nav className="relative h-[113px] w-full overflow-hidden bg-[#474747]">
       <video 
@@ -79,6 +82,7 @@ const NavbarAuth = () => {
               height={32} 
               onMouseEnter={() => setCartSrc('/Cart_gradient.png')}
               onMouseLeave={() => setCartSrc('/Cart.png')}
+              onClick={handleCartClick}
               layout="fixed"
             />
           </Link>

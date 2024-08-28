@@ -8,7 +8,8 @@ import NavbarAuth from '@/components/layout/Navbar';
 import VideoHeaderProduct from '@/components/ui/VideoHeaderProduct';
 import ProductGallery from '@/components/layout/ProductGallery';
 import FashionLoadingAnimation from '@/components/layout/FashionLoadingAnimation';
+import RecommendationLoading from '@/components/layout/RecommendationLoading';
 
 export default function ProductDetail() {
- return <FashionLoadingAnimation/>
+ return <RecommendationLoading/>
 }

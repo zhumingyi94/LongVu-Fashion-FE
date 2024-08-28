@@ -32,7 +32,7 @@ export default function Order() {
             Product
             <Image src="/arrow.png" alt="Arrow" width={25} height={25} className="inline-block mx-[8px]" />
           </a>
-          <span className="text-white">Cart</span>
+          <span className="text-white">Order History</span>
         </nav>
         <h1 className='text-white font-kaushan text-center text-[60px]'>Order History</h1>
 

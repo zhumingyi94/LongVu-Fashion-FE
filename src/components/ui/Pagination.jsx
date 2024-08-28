@@ -1,6 +1,22 @@
 import React from 'react';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  const getPageNumbers = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    if (currentPage <= 3) {
+      return [1, 2, 3, 4, '...', totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+  };
+
   return (
     <div className="flex items-center justify-center my-[87px] space-x-4">
       <button
@@ -10,17 +26,17 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       >
         ← Previous
       </button>
-      {[...Array(totalPages)].map((_, index) => (
+      {getPageNumbers().map((page, index) => (
         <button
           key={index}
-          onClick={() => onPageChange(index + 1)}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
           className={`px-4 py-2 font-montserrat text-[30px] ${
-            currentPage === index + 1 
+            currentPage === page 
               ? 'text-white font-bold' 
               : 'text-gray-400 font-medium'
           }`}
         >
-          {index + 1}
+          {page}
         </button>
       ))}
       <button
