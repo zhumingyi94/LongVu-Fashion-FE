@@ -4,6 +4,14 @@ import ProductCard from '../ui/ProductCard';
 import Pagination from '../ui/Pagination';
 
 const ProductGrid = ({ products }) => {
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 8;
     const totalPages = Math.ceil(products.length / productsPerPage);
@@ -58,7 +66,7 @@ const ProductGrid = ({ products }) => {
               <ProductCard 
 
                 productId={product.id} 
-                name={product.name}
+                name={capitalizeWords(product.name)}
                 brand={product.category}
                 price={product.price}
                 rating={product.rating}

@@ -1,7 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useRouter } from 'next/router';
 
 const SearchBar = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
+  const handleKeyPress = async (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      const token = localStorage.getItem('toklocalen');
+      if (!token) {
+        console.error('No authentication token found');
+        return;
+      }
+
+      // Convert search query to lowercase
+      const query = searchQuery.toLowerCase();
+
+      try {
+        // Fetch product by name
+        const response = await fetch(`/api/product/getByName/${query}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.code === 1000 && data.result.length > 0) {
+          const productId = data.result[0].id;
+          router.push(`/product/${productId}`);
+        } else {
+          console.error('Product not found or error in response');
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
+    }
+  };
+
   return (
     <div 
       className="bg-white flex items-center rounded-full shadow-lg"
@@ -20,6 +61,9 @@ const SearchBar = () => {
       <input
         type="text"
         placeholder="Find your favorite clothes"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onKeyDown={handleKeyPress}
         className="outline-none focus:outline-none focus:ring-0 border-none text-l ml-3"
         style={{ 
           fontFamily: 'Montserrat, sans-serif',
@@ -48,6 +92,3 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
-
-
-
