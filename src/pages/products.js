@@ -10,19 +10,23 @@ import ProductGrid from '@/components/layout/ProductGrid';
 import FashionLoadingAnimation from '@/components/layout/FashionLoadingAnimation';
 
 const ProductPage = () => {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [mapper, setMapper] = useState({});
+  const [filters, setFilters] = useState({
+    categories: [],
+    priceRange: [0, 5000],
+  });
   const router = useRouter();
 
   useEffect(() => {
-    // Ensure minimum loading time for animation
     const timer = setTimeout(() => {
       setAnimationComplete(true);
-    }, 3000); // 3 seconds for the full animation sequence
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -40,7 +44,6 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchMapperAndProducts = async () => {
       try {
-        // Fetch and parse the CSV file
         const mapperResponse = await fetch('/link_mapper.csv');
         const mapperText = await mapperResponse.text();
 
@@ -90,7 +93,6 @@ const ProductPage = () => {
 
         const data = await response.json();
         if (data.code === 1000 && Array.isArray(data.result)) {
-          // Apply mapping and transformation to products
           const mappedProducts = data.result.map(product => {
             let newPathId = mapper[product.pathId] || product.pathId;
             const parts = newPathId.split('/');
@@ -101,8 +103,8 @@ const ProductPage = () => {
               pathId: newPathId
             };
           });
-          setProducts(mappedProducts);
-          console.log(mappedProducts);
+          setAllProducts(mappedProducts);
+          setFilteredProducts(mappedProducts);
         } else {
           throw new Error('Invalid data format received from server');
         }
@@ -119,6 +121,34 @@ const ProductPage = () => {
     fetchMapperAndProducts();
   }, [router]);
 
+  useEffect(() => {
+    const applyFilters = () => {
+      let result = allProducts;
+
+      // Apply category filter
+      if (filters.categories.length > 0) {
+        result = result.filter(product => 
+          filters.categories.includes(product.categories)
+        );
+      }
+      // Apply price range filter
+      result = result.filter(product => 
+        product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]
+      );
+
+      setFilteredProducts(result);
+    };
+
+    applyFilters();
+  }, [filters, allProducts]);
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      ...newFilters
+    }));
+  };
+
   if (isLoading) {
     return <FashionLoadingAnimation onLoadingComplete={handleLoadingComplete} />;
   }
@@ -128,13 +158,16 @@ const ProductPage = () => {
       <NavbarAuth />
       <main className="flex-grow flex">
         <aside className="w-[341px] flex-shrink-0">
-          <FilterSection />
+          <FilterSection 
+            onFilterChange={handleFilterChange}
+            currentFilters={filters}
+          />
         </aside>
         <section className="flex-grow">
           {error ? (
             <p className="text-red-500 text-center">{error}</p>
           ) : (
-            <ProductGrid products={products} />
+            <ProductGrid products={filteredProducts} />
           )}
         </section>
       </main>

@@ -5,7 +5,7 @@ const FilterSection = () => {
   const [priceRange, setPriceRange] = useState([1000, 3000]);
   const [isPriceExpanded, setIsPriceExpanded] = useState(true);
 
-  const categories = ['Dresses', 'Shorts', 'Shirts', 'Top', 'Jeans'];
+  const categories = ['Dresses', 'Jackets', 'Shirts', 'Pants', 'Skirts'];
 
   return (
     <div className="bg-black text-white pl-[46px] w-[341px] mt-[57px]">
