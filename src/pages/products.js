@@ -172,7 +172,7 @@ const ProductPage = () => {
         </section>
       </main>
       <WhiteFooter />
-      <Link href="/ai-retrieval" className="group">
+      <Link href="/error" className="group">
         <div className="fixed right-[50px] bottom-[100px] z-50 w-[100px] h-[100px] rounded-full bg-black overflow-hidden shadow-[0px_0px_27.1px_rgba(255,255,255,0.50)] transition-opacity duration-300 ease-in-out group-hover:opacity-70">
           <Image
             src="/AIRetrieval.png"

@@ -3,8 +3,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import WhiteFooter from '@/components/layout/Footer';
 import NavbarUnauth from '@/components/layout/Navbar_unauth';
+import { useRouter } from 'next/router';
 
 const Error = () => {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push('/products');
+  }
   return (
     <div>
       {/* Video Background Section */}
@@ -31,7 +36,7 @@ const Error = () => {
             <p className="text-white font-montserrat text-center text-[22px]">
               Your visited page not found. You may go to homepage
             </p>
-            <button className="group w-[360px] bg-white text-bold text-black font-montserrat py-3 px-4 font-bold text-[24px] border border-white transition-all duration-300 ease-in-out hover:bg-transparent !mt-[40px]">
+            <button onClick={handleClick} className="group w-[360px] bg-white text-bold text-black font-montserrat py-3 px-4 font-bold text-[24px] border border-white transition-all duration-300 ease-in-out hover:bg-transparent !mt-[40px]">
                 <span className="group-hover:text-white transition-colors duration-300 ease-in-out">Back to homepage</span>
             </button>
           </div>
