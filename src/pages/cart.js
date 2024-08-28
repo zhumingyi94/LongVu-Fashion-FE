@@ -4,8 +4,10 @@ import NavbarAuth from '@/components/layout/Navbar'
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import CartCard from '@/components/ui/CartCard';
+import Papa from 'papaparse';
 
 const capitalizeWords = (str) => {
+  if (typeof str !== 'string' || !str) return '';
   return str.replace(/\b\w/g, char => char.toUpperCase());
 };
 
@@ -16,18 +18,49 @@ export default function Cart() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [mapper, setMapper] = useState({});
 
-  const fetchCartData = async () => {
+  useEffect(() => {
+    const fetchMapperAndCartData = async () => {
+      try {
+        // Fetch and parse the CSV file
+        const mapperResponse = await fetch('/link_mapper.csv');
+        const mapperText = await mapperResponse.text();
+
+        Papa.parse(mapperText, {
+          header: true,
+          complete: (results) => {
+            const newMapper = {};
+            results.data.forEach(row => {
+              newMapper[row.path_id] = row.origin_link;
+            });
+            setMapper(newMapper);
+            fetchCartData(newMapper);
+          },
+          error: (error) => {
+            throw new Error('Failed to parse CSV file');
+          }
+        });
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchMapperAndCartData();
+  }, []);
+
+  const fetchCartData = async (mapper) => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('toklocalen');
 
     if (!userId || !token) {
       setError('User not logged in');
+      setIsLoading(false);
       return;
     }
 
     try {
-      setIsLoading(true);
       const response = await fetch(`/api/user/${userId}/cart`, {
         method: 'GET',
         headers: {
@@ -37,25 +70,30 @@ export default function Cart() {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('toklocalen');
+          router.push('/login');
+          return;
+        }
         throw new Error('Failed to fetch cart data');
       }
 
       const data = await response.json();
       if (data.code === 1000) {
         setCartData(data.result);
-        fetchProductDetails(data.result.cartItems);
+        fetchProductDetails(data.result.cartItems, mapper);
       } else {
         throw new Error(data.message || 'Error fetching cart data');
       }
-    } catch (error) {
-      console.error('Error fetching cart data:', error);
-      setError(error.message);
+    } catch (err) {
+      console.error('Error fetching cart data:', err);
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fetchProductDetails = async (cartItems) => {
+  const fetchProductDetails = async (cartItems, mapper) => {
     const token = localStorage.getItem('toklocalen');
     const details = {};
 
@@ -74,24 +112,30 @@ export default function Cart() {
         }
 
         const data = await response.json();
-        console.log("Data cart:", data);
         if (data.code === 1000) {
-          details[item.product_id] = data.result;
+          let pathId = data.result.pathId;
+          let newPathId = mapper[pathId] || pathId;
+          const parts = newPathId.split('/');
+          const lastPart = parts[parts.length - 1];
+          const imageUrl = `/api/${newPathId}/${lastPart}_0.jpeg`;
+
+          details[item.product_id] = {
+            ...data.result,
+            name: capitalizeWords(data.result.name),
+            imageUrl: imageUrl
+          };
+          console.log("Details: ", details);
         } else {
           throw new Error(data.message || `Error fetching product details for ID: ${item.product_id}`);
         }
       } catch (error) {
         console.error(error);
-        details[item.product_id] = { name: "Product Name Unavailable" };
+        details[item.product_id] = { name: "Product Name Unavailable", imageUrl: "/api/placeholder/154/239" };
       }
     }
-
     setProductDetails(details);
   };
 
-  useEffect(() => {
-    fetchCartData();
-  }, []);
 
   const calculateSubtotal = () => {
     return cartData ? cartData.cartItems.reduce((total, item) => total + item.price * item.quantity, 0) : 0;
@@ -186,7 +230,7 @@ export default function Cart() {
             {cartData && cartData.cartItems.map((item) => (
               <CartCard
                 key={item.id}
-                imageUrl={`/api/product/${item.product_id}/image`}
+                imageUrl={productDetails[item.product_id].imageUrl}
                 name={capitalizeWords(productDetails[item.product_id]?.name) || "Loading..."}
                 price={item.price}
                 size={item.size}

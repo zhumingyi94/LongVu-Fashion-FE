@@ -10,7 +10,7 @@ const CartCard = ({ imageUrl, name, size, color, price, quantity, onDelete, onUp
     <div className="flex bg-black text-white w-[800px] h-[239px] items-center">
       <div className="relative w-[154.303px] h-[238.921px] flex-shrink-0 rounded-[10.774px] bg-[#F0EEED] overflow-hidden">
         <Image 
-          src={imageUrl || "/api/placeholder/154/239"} 
+          src={imageUrl} 
           alt={name} 
           layout="fill" 
           objectFit="cover"
