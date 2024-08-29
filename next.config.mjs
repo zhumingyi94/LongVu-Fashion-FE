@@ -12,7 +12,7 @@ const nextConfig = {
       },
       {
         source: '/api/:path*',
-        destination: 'http://localhost:8080/:path*', // Proxy to Backend
+        destination: 'http://host.docker.internal:8080/:path*', // Proxy to Backend
       },
     ];
   },

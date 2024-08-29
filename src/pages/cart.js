@@ -254,7 +254,7 @@ export default function Cart() {
 
       const orderData = await response.json();
       // Redirect to a confirmation page or handle successful order creation
-      router.push(`/orderuccess`);
+      router.push(`/order_success`);
     } catch (error) {
       console.error('Error creating order:', error);
       setCheckoutError(error.message);

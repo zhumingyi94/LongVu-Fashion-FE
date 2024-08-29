@@ -9,6 +9,8 @@ export const config = {
   },
 };
 
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -40,7 +42,8 @@ export default async function handler(req, res) {
       if (fields.commerce_image) {
         const commerce_image_url = fields.commerce_image[0];
         if (commerce_image_url.startsWith('/api')) {
-          const fullUrl = `http://localhost:8080${commerce_image_url.slice(4)}`;
+          const fullUrl = `${BACKEND_URL}${commerce_image_url.slice(4)}`;
+          console.log('Fetching garment image from:', fullUrl);
           const response = await fetch(fullUrl);
           if (!response.ok) {
             throw new Error(`Failed to fetch garment image: ${response.statusText}`);
